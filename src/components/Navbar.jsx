@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
@@ -9,14 +9,15 @@ const Navbar = () => {
   const closeMenu = () => setIsOpen(false);
 
   const handleSecretClick = () => {
-    setSecretCount((prev) => {
-      if (prev + 1 === 5) {
-        navigate('/admin/login');
-        return 0;
-      }
-      return prev + 1;
-    });
+    setSecretCount((prev) => prev + 1);
   };
+
+  useEffect(() => {
+    if (secretCount === 5) {
+      navigate('/admin/login');
+      setSecretCount(0);
+    }
+  }, [secretCount, navigate]);
 
   return (
     <nav className="bg-rose-300 shadow-md fixed top-0 w-full z-20">

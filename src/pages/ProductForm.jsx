@@ -13,6 +13,7 @@ const ProductForm = () => {
     featured: false,
     descricao: '',
     preco: '',
+    categoria: '',
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -24,7 +25,7 @@ const ProductForm = () => {
         setLoading(true);
         try {
           const response = await api.getProductById(id);
-          setProduct(response.data);
+          setProduct(prev => ({...prev, ...response.data}));
         } catch (err) {
           setError('Failed to fetch product for editing.');
           console.error(err);
@@ -168,6 +169,19 @@ const ProductForm = () => {
               value={product.preco}
               onChange={handleChange}
               required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="categoria">
+              Categoria
+            </label>
+            <input
+              type="text"
+              id="categoria"
+              name="categoria"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={product.categoria}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-6 flex items-center">
