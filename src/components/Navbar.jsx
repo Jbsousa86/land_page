@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const closeMenu = () => setIsOpen(false);
 
@@ -18,6 +19,28 @@ const Navbar = () => {
       setSecretCount(0);
     }
   }, [secretCount, navigate]);
+
+  const handleHomeClick = () => {
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    closeMenu();
+  };
+
+  const handleScroll = (e, id) => {
+    e.preventDefault();
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
+    }
+    closeMenu();
+  };
 
   return (
     <nav className="bg-rose-300 shadow-md fixed top-0 w-full z-20">
@@ -38,10 +61,10 @@ const Navbar = () => {
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
-                <Link to="/" className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Início</Link>
-                <a href="/#quem-sou-eu" className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Sobre</a>
+                <Link to="/" onClick={handleHomeClick} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Início</Link>
+                <a href="#quem-sou-eu" onClick={(e) => handleScroll(e, 'quem-sou-eu')} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Sobre</a>
                 <Link to="/catalogo" className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Catálogo</Link>
-                <a href="#contact" className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contato</a>
+                <a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contato</a>
               </div>
             </div>
           </div>
@@ -65,10 +88,10 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link to="/" onClick={closeMenu} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Início</Link>
-            <a href="/#quem-sou-eu" onClick={closeMenu} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sobre</a>
+            <Link to="/" onClick={handleHomeClick} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Início</Link>
+            <a href="#quem-sou-eu" onClick={(e) => handleScroll(e, 'quem-sou-eu')} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sobre</a>
             <Link to="/catalogo" onClick={closeMenu} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Catálogo</Link>
-            <a href="#contact" onClick={closeMenu} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contato</a>
+            <a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contato</a>
           </div>
         </div>
       )}

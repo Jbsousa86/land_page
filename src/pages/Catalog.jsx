@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { api } from '../api';
 import ProductCard from '../components/ProductCard';
 
@@ -7,6 +8,7 @@ const Catalog = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -23,6 +25,14 @@ const Catalog = () => {
     };
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get('search');
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    }
+  }, [location.search]);
 
   const filteredProducts = products.filter((product) => {
     const term = searchTerm.toLowerCase();
