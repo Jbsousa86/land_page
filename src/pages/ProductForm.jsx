@@ -146,6 +146,11 @@ const ProductForm = () => {
               value={product.img}
               onChange={handleChange}
             />
+            {product.img.length > 255 && (
+              <p className="text-red-500 text-xs mt-1 font-bold">
+                A URL da imagem é muito longa ({product.img.length} caracteres). O limite é 255. Use o botão de Upload.
+              </p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="descricao">
@@ -160,6 +165,9 @@ const ProductForm = () => {
               onChange={handleChange}
               required
             ></textarea>
+            <p className={`text-xs text-right mt-1 ${product.descricao.length > 255 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
+              {product.descricao.length} caracteres {product.descricao.length > 255 && '(Excede o limite de 255)'}
+            </p>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="preco">
