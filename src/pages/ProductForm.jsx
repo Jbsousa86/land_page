@@ -78,8 +78,12 @@ const ProductForm = () => {
       }
       navigate('/admin/dashboard');
     } catch (err) {
-      setError(`Failed to ${isEditing ? 'update' : 'create'} product.`);
       console.error(err);
+      if (err.code === '22001') {
+        setError('Erro: O texto é muito longo para o banco de dados (limite de 255 caracteres). Verifique a descrição ou a URL da imagem.');
+      } else {
+        setError(`Falha ao ${isEditing ? 'atualizar' : 'criar'} produto: ${err.message || 'Erro desconhecido'}`);
+      }
     } finally {
       setLoading(false);
     }
