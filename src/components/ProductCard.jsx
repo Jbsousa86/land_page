@@ -23,10 +23,10 @@ const ProductCard = ({ product }) => {
           <img
             src={product.img}
             alt={product.nome || 'Imagem do produto'}
-            className="w-full h-40 object-cover transform hover:scale-110 transition-transform duration-500"
+            className="w-full h-32 md:h-40 object-cover transform hover:scale-110 transition-transform duration-500"
           />
         </div>
-        <div className="p-3 flex flex-col grow">
+        <div className="p-2 md:p-3 flex flex-col grow">
           <p className="text-xs text-gray-500 text-center">{product.categoria}</p>
           <h3 className="text-sm font-bold text-gray-800 text-center leading-tight mb-1">
             {product.nome}
@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
             )}
             </p>
           </div>
-          <p className="text-base font-bold text-center mt-2 text-gray-900">
+          <p className="text-sm md:text-base font-bold text-center mt-2 text-gray-900">
                 R$ {product?.preco
                 ? Number(String(product.preco).replace(',', '.')).toLocaleString('pt-BR', {
                 minimumFractionDigits: 2
@@ -56,12 +56,12 @@ const ProductCard = ({ product }) => {
               : '0,00'}
           </p>
 
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2 mt-2 md:mt-3">
             <a
               href={`https://wa.me/5563992952695?text=Olá! Tenho interesse no produto: ${encodeURIComponent(product.nome || '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white text-center font-bold py-1.5 px-2 rounded text-sm flex items-center justify-center"
+              className="flex-1 bg-green-500 hover:bg-green-600 text-white text-center font-bold py-1.5 px-2 rounded text-xs md:text-sm flex items-center justify-center"
             >
               Comprar
             </a>

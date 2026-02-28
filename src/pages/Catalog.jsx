@@ -70,29 +70,34 @@ const Catalog = () => {
             Catálogo de Produtos
           </h1>
 
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {['Todas', ...new Set(products.map((p) => p.categoria).filter(Boolean))].sort().map((category) => {
-              const count = category === 'Todas'
-                ? products.length
-                : products.filter((p) => p.categoria === category).length;
+          {/* Submenu de Categorias (Sticky) */}
+          <div className="sticky top-16 z-20 bg-black/40 backdrop-blur-md py-3 mb-8 -mx-4 px-4 sm:mx-0 sm:rounded-xl border-y border-white/10 shadow-lg">
+            <div className="flex overflow-x-auto gap-3 pb-1 sm:justify-center">
+              {['Todas', ...new Set(products.map((p) => p.categoria).filter(Boolean))].sort().map((category) => {
+                const count = category === 'Todas'
+                  ? products.length
+                  : products.filter((p) => p.categoria === category).length;
 
-              return (
-                <button
-                  key={category}
-                  onClick={() => {
-                    setSearchTerm(category === 'Todas' ? '' : category);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm ${
-                    (category === 'Todas' && searchTerm === '') || (category !== 'Todas' && searchTerm === category)
-                      ? 'bg-rose-500 text-white'
-                      : 'bg-white text-gray-700 hover:bg-rose-100'
-                  }`}
-                >
-                  {category} <span className="ml-1 opacity-90">({count})</span>
-                </button>
-              );
-            })}
+                const isActive = (category === 'Todas' && searchTerm === '') || (category !== 'Todas' && searchTerm === category);
+
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setSearchTerm(category === 'Todas' ? '' : category);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                      isActive
+                        ? 'bg-rose-500 text-white shadow-md transform scale-105'
+                        : 'bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    {category} <span className="ml-1 text-xs opacity-80">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="mb-8 max-w-xl mx-auto">
@@ -132,7 +137,7 @@ const Catalog = () => {
             }).map(([category, categoryProducts]) => (
               <div key={category} className="mb-12">
                 <h2 className="text-2xl font-bold text-white mb-6 border-b border-white/30 pb-2 inline-block">{category}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {categoryProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
