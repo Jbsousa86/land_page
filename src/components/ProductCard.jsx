@@ -5,7 +5,7 @@ const ProductCard = ({ product }) => {
   const [showMore, setShowMore] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const description = product.descricao || '';
-  const shortDescription = description.substring(0, 100);
+  const shortDescription = description.substring(0, 60);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -18,21 +18,22 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
-        <div className="overflow-hidden cursor-pointer" onClick={openModal}>
+      <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300 h-full flex flex-col">
+        <div className="overflow-hidden cursor-pointer shrink-0" onClick={openModal}>
           <img
             src={product.img}
-            alt={product.nome}
+            alt={product.nome || 'Imagem do produto'}
             className="w-full h-48 object-cover transform hover:scale-110 transition-transform duration-500"
           />
         </div>
-        <div className="p-4">
+        <div className="p-4 flex flex-col grow">
           <p className="text-sm text-gray-500 text-center">{product.categoria}</p>
           <h3 className="text-lg font-semibold text-gray-800 text-center">
             {product.nome}
           </h3>
-          <p className="text-sm text-gray-600 mt-2 text-center">
-            {description.length > 100 ? (
+          <div className="grow">
+            <p className="text-sm text-gray-600 mt-2 text-center">
+            {description.length > 60 ? (
               <>
                 {showMore ? description : `${shortDescription}...`}
                 <button
@@ -45,10 +46,11 @@ const ProductCard = ({ product }) => {
             ) : (
               description
             )}
-          </p>
-          <p className="text-lg font-bold">
+            </p>
+          </div>
+          <p className="text-lg font-bold text-center mt-2">
                 R$ {product?.preco
-                ? Number(product.preco).toLocaleString('pt-BR', {
+                ? Number(String(product.preco).replace(',', '.')).toLocaleString('pt-BR', {
                 minimumFractionDigits: 2
             })
               : '0,00'}
@@ -56,7 +58,7 @@ const ProductCard = ({ product }) => {
 
           <div className="flex gap-2 mt-4">
             <a
-              href={`https://wa.me/5563992952695?text=Olá! Tenho interesse no produto: ${encodeURIComponent(product.nome)}`}
+              href={`https://wa.me/5563992952695?text=Olá! Tenho interesse no produto: ${encodeURIComponent(product.nome || '')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 px-4 rounded"
@@ -78,7 +80,7 @@ const ProductCard = ({ product }) => {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <img
           src={product.img}
-          alt={product.nome}
+          alt={product.nome || 'Imagem do produto'}
           className="object-contain max-h-[70vh]"
         />
       </Modal>
