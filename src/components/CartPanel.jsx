@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { formatCurrency, parseCurrency } from '../utils/currency';
 
-const CartPanel = ({ items, onUpdateQuantity, onRemove }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const CartPanel = ({ items, isOpen, onClose, onUpdateQuantity, onRemove }) => {
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
   const total = items.reduce(
     (sum, item) => sum + parseCurrency(item.product.preco) * item.quantity,
@@ -19,30 +18,10 @@ const CartPanel = ({ items, onUpdateQuantity, onRemove }) => {
   };
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition hover:bg-rose-600 md:bottom-5 md:right-6"
-        aria-label={`Abrir carrinho, ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`}
-        title="Abrir carrinho"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l2.4 12.2a2 2 0 002 1.6h8.8a2 2 0 002-1.6L22 8H6" />
-          <circle cx="10" cy="21" r="1" />
-          <circle cx="18" cy="21" r="1" />
-        </svg>
-        {itemCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-gray-900 px-1 text-xs font-bold">
-            {itemCount}
-          </span>
-        )}
-      </button>
-
-      {isOpen && (
+    isOpen && (
         <div
           className="fixed inset-0 z-60 flex items-end justify-center bg-black/55 sm:items-stretch sm:justify-end"
-          onClick={() => setIsOpen(false)}
+          onClick={onClose}
         >
           <section
             role="dialog"
@@ -58,7 +37,7 @@ const CartPanel = ({ items, onUpdateQuantity, onRemove }) => {
               </div>
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={onClose}
                 className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100"
                 aria-label="Fechar carrinho"
                 title="Fechar carrinho"
@@ -151,8 +130,7 @@ const CartPanel = ({ items, onUpdateQuantity, onRemove }) => {
             </footer>
           </section>
         </div>
-      )}
-    </>
+    )
   );
 };
 

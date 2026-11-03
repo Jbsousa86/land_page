@@ -24,6 +24,8 @@ export default function App() {
       return [];
     }
   });
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     try {
@@ -66,7 +68,7 @@ export default function App() {
   return (
     <div className="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
       <AuthProvider>
-        <Navbar />
+        <Navbar itemCount={cartItemCount} onOpenCart={() => setIsCartOpen(true)} />
         <main className="grow pt-16">
           <Routes>
             <Route path="/" element={<Home onAddToCart={addToCart} />} />
@@ -84,6 +86,8 @@ export default function App() {
         <Footer />
         <CartPanel
           items={cartItems}
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
           onUpdateQuantity={updateCartQuantity}
           onRemove={removeFromCart}
         />
