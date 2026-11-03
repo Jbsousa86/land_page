@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Modal from './Modal';
+import { formatCurrency, parseCurrency } from '../utils/currency';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onAddToCart }) => {
   const [showMore, setShowMore] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -67,22 +68,17 @@ const ProductCard = ({ product }) => {
             </p>
           </div>
           <p className="text-sm md:text-base font-bold text-center mt-2 text-gray-900">
-            R$ {product?.preco
-              ? Number(String(product.preco).replace(',', '.')).toLocaleString('pt-BR', {
-                  minimumFractionDigits: 2,
-                })
-              : '0,00'}
+            {formatCurrency(parseCurrency(product.preco))}
           </p>
 
           <div className="flex gap-2 mt-2 md:mt-3">
-            <a
-              href={`https://wa.me/5563992952695?text=Olá! Tenho interesse no produto: ${encodeURIComponent(product.nome || '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white text-center font-bold py-1.5 px-2 rounded text-xs md:text-sm flex items-center justify-center"
+            <button
+              type="button"
+              onClick={() => onAddToCart(product)}
+              className="flex-1 bg-rose-500 hover:bg-rose-600 text-white text-center font-bold py-1.5 px-2 rounded text-xs md:text-sm flex items-center justify-center"
             >
-              Comprar
-            </a>
+              Adicionar
+            </button>
             <button
               type="button"
               onClick={handleShare}

@@ -1,23 +1,76 @@
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import Footer from './components/Footer';
+import CartPanel from './components/CartPanel';
 import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductForm from './pages/ProductForm';
 import ProtectedRoute from './components/ProtectedRoute';
 
+const CART_STORAGE_KEY = 'eliane-importados-cart';
+
 export default function App() {
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const savedItems = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
+      return Array.isArray(savedItems)
+        ? savedItems.filter((item) => item?.product?.id !== undefined && Number.isInteger(item.quantity) && item.quantity > 0)
+        : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Unable to persist cart:', error);
+    }
+  }, [cartItems]);
+
+  const addToCart = (product) => {
+    setCartItems((currentItems) => {
+      const existingItem = currentItems.find(
+        (item) => String(item.product.id) === String(product.id)
+      );
+
+      return existingItem
+        ? currentItems.map((item) => (
+            String(item.product.id) === String(product.id)
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          ))
+        : [...currentItems, { product, quantity: 1 }];
+    });
+  };
+
+  const updateCartQuantity = (productId, quantity) => {
+    setCartItems((currentItems) => currentItems.map((item) => (
+      String(item.product.id) === String(productId)
+        ? { ...item, quantity: Math.max(1, quantity) }
+        : item
+    )));
+  };
+
+  const removeFromCart = (productId) => {
+    setCartItems((currentItems) => currentItems.filter(
+      (item) => String(item.product.id) !== String(productId)
+    ));
+  };
+
   return (
     <div className="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
       <AuthProvider>
         <Navbar />
         <main className="grow pt-16">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/catalogo" element={<Catalog />} />
+            <Route path="/" element={<Home onAddToCart={addToCart} />} />
+            <Route path="/catalogo" element={<Catalog onAddToCart={addToCart} />} />
             <Route path="/admin/login" element={<LoginPage />} />
 
             {/* Protected Admin Routes */}
@@ -29,6 +82,11 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <CartPanel
+          items={cartItems}
+          onUpdateQuantity={updateCartQuantity}
+          onRemove={removeFromCart}
+        />
         {/* ================= WHATSAPP FLUTUANTE ================= */}
         <a
           href="https://wa.me/5563992952695"

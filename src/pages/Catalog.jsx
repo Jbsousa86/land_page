@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { api } from '../api';
 import ProductCard from '../components/ProductCard';
 
-const Catalog = () => {
+const Catalog = ({ onAddToCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -148,7 +148,7 @@ const Catalog = () => {
                 <h2 className="text-xl font-bold text-white mb-4 border-b border-white/30 pb-2 inline-block">{category}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                   {categoryProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
                   ))}
                 </div>
               </div>
