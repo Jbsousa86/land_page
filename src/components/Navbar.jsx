@@ -55,7 +55,7 @@ const Navbar = ({ itemCount, onOpenCart }) => {
               </Link>
               <span 
                 onClick={handleSecretClick}
-                className="ml-4 text-3xl text-white select-none cursor-default" 
+                className="ml-2 whitespace-nowrap text-xl text-white select-none cursor-default sm:ml-4 sm:text-2xl md:text-3xl" 
                 style={{ fontFamily: '"Dancing Script", cursive' }}
               >
                 Eliane Importados
@@ -74,7 +74,7 @@ const Navbar = ({ itemCount, onOpenCart }) => {
             <button
               type="button"
               onClick={onOpenCart}
-              className="relative inline-flex h-10 items-center justify-center gap-2 rounded-md bg-rose-500 px-3 text-white shadow-sm transition hover:bg-rose-600"
+              className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-500 p-0 text-white shadow-sm transition hover:bg-rose-600 md:w-auto md:gap-2 md:rounded-md md:px-3"
               aria-label={`Abrir carrinho, ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`}
               title="Abrir carrinho"
             >
@@ -84,7 +84,7 @@ const Navbar = ({ itemCount, onOpenCart }) => {
                 <circle cx="18" cy="21" r="1" />
               </svg>
               <span className="hidden md:inline">Carrinho</span>
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gray-900 px-1 text-xs font-bold">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gray-900 px-1 text-[10px] font-bold md:static md:text-xs">
                 {itemCount}
               </span>
             </button>
