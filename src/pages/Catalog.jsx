@@ -64,16 +64,41 @@ const Catalog = () => {
         backgroundImage: "url('/bg.jpg')",
       }}
     >
-      <div className="bg-black/30 min-h-screen">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-extrabold text-white text-center mb-12">
+      <div className="bg-black/55 min-h-screen">
+        <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-extrabold text-white text-center mb-6 sm:mb-8">
             Catálogo de Produtos
           </h1>
 
-          {/* Submenu de Categorias (Sticky) */}
-          <div className="sticky top-16 z-20 bg-black/40 backdrop-blur-md py-3 mb-8 -mx-4 px-4 sm:mx-0 sm:rounded-xl border-y border-white/10 shadow-lg">
-            <div className="flex overflow-x-auto gap-3 pb-1 sm:justify-center">
-              {['Todas', ...new Set(products.map((p) => p.categoria).filter(Boolean))].sort().map((category) => {
+          <div className="sticky top-16 z-20 -mx-4 sm:mx-0 mb-7 px-4 py-3 sm:rounded-lg border-y sm:border border-white/10 bg-black/65 backdrop-blur-md shadow-lg">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="relative w-full md:max-w-md md:flex-1">
+                <input
+                  type="text"
+                  placeholder="Buscar por nome ou categoria..."
+                  aria-label="Buscar produtos"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full h-11 rounded-lg border border-white/20 bg-white px-4 pl-11 pr-16 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-400"
+                />
+                <div className="absolute left-4 top-3 text-gray-400" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-rose-700 hover:text-rose-900"
+                  >
+                    Limpar
+                  </button>
+                )}
+              </div>
+
+              <div className="flex overflow-x-auto gap-2 pb-1 md:flex-1 md:justify-end md:pb-0">
+              {['Todas', ...new Set(products.map((p) => p.categoria).filter(Boolean))].map((category) => {
                 const count = category === 'Todas'
                   ? products.length
                   : products.filter((p) => p.categoria === category).length;
@@ -87,10 +112,10 @@ const Catalog = () => {
                       setSearchTerm(category === 'Todas' ? '' : category);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                    className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold transition-colors ${
                       isActive
-                        ? 'bg-rose-500 text-white shadow-md transform scale-105'
-                        : 'bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white border border-white/10'
+                        ? 'bg-rose-500 text-white shadow-sm'
+                        : 'bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white border border-white/15'
                     }`}
                   >
                     {category} <span className="ml-1 text-xs opacity-80">({count})</span>
@@ -98,27 +123,11 @@ const Catalog = () => {
                 );
               })}
             </div>
-          </div>
-
-          <div className="mb-8 max-w-xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Buscar por nome ou categoria..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-3 rounded-full shadow-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400 pl-12"
-              />
-              <div className="absolute left-4 top-3.5 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
             </div>
           </div>
 
           {filteredProducts.length === 0 ? (
-            <p className="text-white text-center text-xl">Nenhum produto encontrado.</p>
+            <p className="text-white text-center text-lg">Nenhum produto encontrado.</p>
           ) : (
             Object.entries(
               filteredProducts.reduce((acc, product) => {
@@ -135,9 +144,9 @@ const Catalog = () => {
               if (catB === term && catA !== term) return 1;
               return a[0].localeCompare(b[0]);
             }).map(([category, categoryProducts]) => (
-              <div key={category} className="mb-12">
-                <h2 className="text-2xl font-bold text-white mb-6 border-b border-white/30 pb-2 inline-block">{category}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div key={category} className="mb-9">
+                <h2 className="text-xl font-bold text-white mb-4 border-b border-white/30 pb-2 inline-block">{category}</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                   {categoryProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
