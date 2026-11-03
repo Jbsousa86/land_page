@@ -55,7 +55,7 @@ const Navbar = ({ itemCount, onOpenCart }) => {
               </Link>
               <span 
                 onClick={handleSecretClick}
-                className="ml-2 whitespace-nowrap text-xl text-white select-none cursor-default sm:ml-4 sm:text-2xl md:text-3xl" 
+                className="ml-2 whitespace-nowrap text-lg text-white select-none cursor-default min-[360px]:text-2xl sm:ml-4 md:text-3xl" 
                 style={{ fontFamily: '"Dancing Script", cursive' }}
               >
                 Eliane Importados
