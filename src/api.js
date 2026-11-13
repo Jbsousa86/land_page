@@ -1,11 +1,37 @@
 import { supabase } from './supabaseClient';
 
+const HIDDEN_HASH = '#oculto';
+
+const normalizeProduct = (row) => {
+  if (!row) return row;
+  const rawImg = String(row.img || '');
+  const isHiddenByHash = rawImg.endsWith(HIDDEN_HASH);
+  const cleanImg = isHiddenByHash ? rawImg.slice(0, -HIDDEN_HASH.length) : rawImg;
+  const visivel = typeof row.visivel === 'boolean' ? row.visivel : !isHiddenByHash;
+
+  return {
+    ...row,
+    img: cleanImg,
+    visivel,
+  };
+};
+
+const prepareProductPayload = (product) => {
+  const { visivel = true, ...rest } = product;
+  const cleanImg = String(rest.img || '').replace(/#oculto$/, '');
+  return {
+    ...rest,
+    img: visivel === false ? `${cleanImg}${HIDDEN_HASH}` : cleanImg,
+  };
+};
+
 export const api = {
-  getProducts: async () => {
+  getProducts: async ({ includeHidden = false } = {}) => {
     try {
       const { data, error } = await supabase
         .from('produtos')
-        .select('*');
+        .select('*')
+        .order('id', { ascending: true });
 
       if (error) {
         console.error('Error fetching products from Supabase:', error);
@@ -16,7 +42,10 @@ export const api = {
         return { data: [] };
       }
 
-      return { data };
+      const normalized = data.map(normalizeProduct);
+      return {
+        data: includeHidden ? normalized : normalized.filter((item) => item.visivel !== false),
+      };
     } catch (err) {
       console.error('Unexpected error during product fetch:', err);
       throw err;
@@ -35,13 +64,14 @@ export const api = {
       throw error;
     }
 
-    return { data };
+    return { data: normalizeProduct(data) };
   },
 
   createProduct: async (newProduct) => {
+    const payload = prepareProductPayload(newProduct);
     const { data, error } = await supabase
       .from('produtos')
-      .insert([newProduct])
+      .insert([payload])
       .select();
 
     if (error) {
@@ -49,13 +79,14 @@ export const api = {
       throw error;
     }
 
-    return { data: data[0] };
+    return { data: normalizeProduct(data[0]) };
   },
 
   updateProduct: async (id, updatedProduct) => {
+    const payload = prepareProductPayload(updatedProduct);
     const { data, error } = await supabase
       .from('produtos')
-      .update(updatedProduct)
+      .update(payload)
       .eq('id', id)
       .select();
 
@@ -64,7 +95,7 @@ export const api = {
       throw error;
     }
 
-    return { data: data[0] };
+    return { data: normalizeProduct(data[0]) };
   },
 
   deleteProduct: async (id) => {

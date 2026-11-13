@@ -11,6 +11,7 @@ const ProductForm = () => {
     nome: '',
     img: '',
     featured: false,
+    visivel: true,
     descricao: '',
     preco: '',
     categoria: '',
@@ -191,17 +192,31 @@ const ProductForm = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-6 flex items-center">
-            <input
-              type="checkbox"
-              id="featured"
-              name="featured"
-              className="mr-2 leading-tight"
-              checked={product.featured}
-              onChange={handleChange}
-            />
-            <label className="text-sm text-gray-700" htmlFor="featured">
-              Produto em Destaque
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+            <label className="inline-flex items-center text-sm text-gray-700 cursor-pointer" htmlFor="visivel">
+              <input
+                type="checkbox"
+                id="visivel"
+                name="visivel"
+                className="mr-2 leading-tight h-4 w-4 accent-green-600"
+                checked={product.visivel !== false}
+                onChange={handleChange}
+              />
+              <span className="font-semibold">
+                {product.visivel !== false ? '👁️ Produto Visível no Site' : '🚫 Produto Oculto no Site'}
+              </span>
+            </label>
+
+            <label className="inline-flex items-center text-sm text-gray-700 cursor-pointer" htmlFor="featured">
+              <input
+                type="checkbox"
+                id="featured"
+                name="featured"
+                className="mr-2 leading-tight h-4 w-4 accent-rose-600"
+                checked={product.featured}
+                onChange={handleChange}
+              />
+              <span>Produto em Destaque</span>
             </label>
           </div>
           {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}

@@ -15,6 +15,7 @@ const AdminDashboard = () => {
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [togglingId, setTogglingId] = useState(null);
   const { logout, verifyPassword } = useAuth();
 
   const toggleSelectProduct = (id) => {
@@ -48,13 +49,32 @@ const AdminDashboard = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await api.getProducts();
+      const response = await api.getProducts({ includeHidden: true });
       setProducts(response.data);
     } catch (err) {
       setError('Failed to fetch products.');
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleVisibility = async (product) => {
+    const nextVisible = product.visivel === false;
+    try {
+      setTogglingId(product.id);
+      const response = await api.updateProduct(product.id, {
+        ...product,
+        visivel: nextVisible,
+      });
+      setProducts((prev) =>
+        prev.map((p) => (String(p.id) === String(product.id) ? response.data : p))
+      );
+    } catch (err) {
+      console.error('Erro ao alterar visibilidade:', err);
+      alert('Não foi possível alterar a visibilidade do produto.');
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -202,8 +222,17 @@ const AdminDashboard = () => {
                     className="h-14 w-14 object-cover rounded-lg border bg-gray-50 shrink-0"
                   />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-[11px] font-bold text-gray-400">#{product.id}</span>
+                      {product.visivel === false ? (
+                        <span className="text-[10px] font-bold bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
+                          🚫 Oculto no site
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                          👁️ Visível
+                        </span>
+                      )}
                       {product.featured && (
                         <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
                           ★ Destaque
@@ -220,24 +249,36 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-gray-100 grid grid-cols-3 gap-2">
+                <div className="mt-3 pt-2.5 border-t border-gray-100 grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    disabled={togglingId === product.id}
+                    onClick={() => handleToggleVisibility(product)}
+                    className={`py-2 px-1.5 rounded-lg font-bold text-xs text-center cursor-pointer transition ${
+                      product.visivel === false
+                        ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                        : 'bg-green-50 hover:bg-green-100 text-green-700'
+                    }`}
+                  >
+                    {product.visivel === false ? '🚫 Oculto' : '👁️ Visível'}
+                  </button>
                   <button
                     type="button"
                     onClick={() => openPosterForSingleProduct(product.id)}
-                    className="py-2 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs text-center cursor-pointer"
+                    className="py-2 px-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs text-center cursor-pointer"
                   >
                     🎨 Cartaz
                   </button>
                   <Link
                     to={`/admin/products/${product.id}/edit`}
-                    className="py-2 px-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs text-center"
+                    className="py-2 px-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs text-center"
                   >
                     ✏️ Editar
                   </Link>
                   <button
                     type="button"
                     onClick={() => handleRequestDelete(product)}
-                    className="py-2 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs text-center cursor-pointer"
+                    className="py-2 px-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs text-center cursor-pointer"
                   >
                     🗑️ Deletar
                   </button>
@@ -275,6 +316,9 @@ const AdminDashboard = () => {
                     Featured
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Visível no Site
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Ações
                   </th>
                 </tr>
@@ -310,6 +354,21 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {product.featured ? 'Yes' : 'No'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <button
+                          type="button"
+                          disabled={togglingId === product.id}
+                          onClick={() => handleToggleVisibility(product)}
+                          title="Clique para alternar se o produto aparece ou não no site"
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition cursor-pointer ${
+                            product.visivel === false
+                              ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                              : 'bg-green-100 hover:bg-green-200 text-green-800'
+                          }`}
+                        >
+                          {product.visivel === false ? '🚫 Oculto' : '👁️ Visível'}
+                        </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center"> {/* Stack buttons on small screens */}
