@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { api } from '../api';
 import Catalog from './Catalog';
+import { formatCurrency, parseCurrency } from '../utils/currency';
 
 const Home = ({ onAddToCart }) => {
   const [products, setProducts] = useState([]);
@@ -64,86 +65,99 @@ const Home = ({ onAddToCart }) => {
 
   return (
     <>
-      <section
-        className="relative bg-cover bg-center"
-        style={{ backgroundImage: "url('/bg.jpg')" }}
-        aria-label="Produtos em destaque"
-      >
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="relative z-10 mx-auto max-w-6xl px-6 py-10 sm:py-14">
-          <h1 className="mb-8 text-center text-3xl font-bold text-white">
-            Produtos em Destaque
-          </h1>
-
-          {currentProduct ? (
-            <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl bg-black/50 shadow-xl">
-              <div className="relative flex h-[min(60vh,560px)] min-h-75 items-center justify-center bg-black/20">
-                <img
-                  key={currentProduct.id}
-                  src={currentProduct.img}
-                  alt={currentProduct.nome || 'Produto em destaque'}
-                  className="h-full w-full object-contain"
-                />
+      {currentProduct && (
+        <section
+          className="relative bg-cover bg-center border-b border-white/10"
+          style={{ backgroundImage: "url('/bg.jpg')" }}
+          aria-label="Produtos em destaque"
+        >
+          <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" />
+          <div className="relative z-10 mx-auto max-w-5xl px-4 py-3 sm:py-4">
+            <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl bg-black/45 border border-white/15 px-3 py-2.5 sm:px-5 sm:py-3 shadow-md backdrop-blur-md">
+              <div className="flex items-center gap-3 sm:gap-5">
                 {featuredProducts.length > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => changeSlide(-1)}
-                      aria-label="Ver produto em destaque anterior"
-                      className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-2xl text-gray-800 shadow transition hover:bg-white"
-                    >
-                      ‹
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => changeSlide(1)}
-                      aria-label="Ver próximo produto em destaque"
-                      className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-2xl text-gray-800 shadow transition hover:bg-white"
-                    >
-                      ›
-                    </button>
-                  </>
+                  <button
+                    type="button"
+                    onClick={() => changeSlide(-1)}
+                    aria-label="Ver produto em destaque anterior"
+                    className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-lg text-white transition hover:bg-white/30 cursor-pointer"
+                  >
+                    ‹
+                  </button>
                 )}
-              </div>
-              <div className="flex flex-col items-center gap-3 p-5 text-center text-white sm:flex-row sm:justify-between sm:text-left">
-                <div>
-                  <h2 className="text-xl font-bold">{currentProduct.nome}</h2>
-                  {currentProduct.categoria && (
-                    <p className="mt-1 text-sm text-white/75">{currentProduct.categoria}</p>
+
+                <div className="h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl bg-white/95 p-1 shadow-sm flex items-center justify-center">
+                  <img
+                    key={currentProduct.id}
+                    src={currentProduct.img}
+                    alt={currentProduct.nome || 'Produto em destaque'}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1 text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block rounded-full bg-rose-500/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                      ✨ Destaque
+                    </span>
+                    {currentProduct.categoria && (
+                      <span className="truncate text-[11px] text-white/70">
+                        {currentProduct.categoria}
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="mt-0.5 truncate text-sm sm:text-base font-bold text-white">
+                    {currentProduct.nome}
+                  </h2>
+                  {currentProduct.preco && (
+                    <p className="text-xs sm:text-sm font-extrabold text-rose-300">
+                      {formatCurrency(parseCurrency(currentProduct.preco))}
+                    </p>
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => onAddToCart(currentProduct)}
-                  className="rounded-lg bg-rose-500 px-5 py-2 font-bold text-white transition hover:bg-rose-600"
-                >
-                  Adicionar ao carrinho
-                </button>
-              </div>
-              {featuredProducts.length > 1 && (
-                <div className="flex justify-center gap-2 pb-5" aria-label="Selecionar produto em destaque">
-                  {featuredProducts.map((product, index) => (
-                    <button
-                      key={product.id}
-                      type="button"
-                      onClick={() => setActiveSlide(index)}
-                      aria-label={`Mostrar destaque ${index + 1}: ${product.nome || 'Produto'}`}
-                      aria-current={index === activeSlide ? 'true' : undefined}
-                      className={`h-2.5 rounded-full transition-all ${
-                        index === activeSlide ? 'w-7 bg-rose-400' : 'w-2.5 bg-white/60 hover:bg-white'
-                      }`}
-                    />
-                  ))}
+
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => onAddToCart(currentProduct)}
+                    className="rounded-lg bg-rose-500 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-white shadow transition hover:bg-rose-600 cursor-pointer whitespace-nowrap"
+                  >
+                    + Carrinho
+                  </button>
+
+                  {featuredProducts.length > 1 && (
+                    <div className="flex items-center gap-1" aria-label="Selecionar produto em destaque">
+                      {featuredProducts.map((product, index) => (
+                        <button
+                          key={product.id}
+                          type="button"
+                          onClick={() => setActiveSlide(index)}
+                          aria-label={`Mostrar destaque ${index + 1}: ${product.nome || 'Produto'}`}
+                          aria-current={index === activeSlide ? 'true' : undefined}
+                          className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                            index === activeSlide ? 'w-4 bg-rose-400' : 'w-1.5 bg-white/50 hover:bg-white'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+
+                {featuredProducts.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => changeSlide(1)}
+                    aria-label="Ver próximo produto em destaque"
+                    className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-lg text-white transition hover:bg-white/30 cursor-pointer"
+                  >
+                    ›
+                  </button>
+                )}
+              </div>
             </div>
-          ) : (
-            <p className="rounded-xl bg-black/50 p-8 text-center text-white">
-              Nenhum produto em destaque no momento.
-            </p>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
