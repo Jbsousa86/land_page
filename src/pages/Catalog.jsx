@@ -34,6 +34,15 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
     }
   }, [location.search]);
 
+  const searchParams = new URLSearchParams(location.search);
+  const posterIds = (searchParams.get('produtos') || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const posterHighlightProducts = posterIds
+    .map((id) => products.find((p) => String(p.id) === String(id)))
+    .filter(Boolean);
+
   const filteredProducts = products.filter((product) => {
     const term = searchTerm.toLowerCase();
     const nameMatch = product.nome?.toLowerCase().includes(term);
@@ -69,6 +78,30 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
           <h1 className="text-3xl font-extrabold text-white text-center mb-6 sm:mb-8">
             Catálogo de Produtos
           </h1>
+
+          {posterHighlightProducts.length > 0 && (
+            <div className="mb-8 rounded-2xl border-2 border-rose-400/70 bg-rose-950/70 backdrop-blur-md p-4 sm:p-6 shadow-xl">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <h2 className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
+                  ✨ Produtos do Cartaz Selecionado
+                </h2>
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="text-xs font-bold bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-full transition"
+                  >
+                    Ver todos os produtos da loja
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                {posterHighlightProducts.map((product) => (
+                  <ProductCard key={`poster-${product.id}`} product={product} onAddToCart={onAddToCart} />
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="sticky top-16 z-20 -mx-4 sm:mx-0 mb-7 px-4 py-3 sm:rounded-lg border-y sm:border border-white/10 bg-black/65 backdrop-blur-md shadow-lg">
             <div className="flex flex-col gap-3 md:flex-row md:items-center">

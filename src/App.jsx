@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductForm from './pages/ProductForm';
+import InteractivePoster from './pages/InteractivePoster';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const CART_STORAGE_KEY = 'eliane-importados-cart';
@@ -73,6 +74,15 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home onAddToCart={addToCart} />} />
             <Route path="/catalogo" element={<Catalog onAddToCart={addToCart} />} />
+            <Route
+              path="/cartaz"
+              element={
+                <InteractivePoster
+                  onAddToCart={addToCart}
+                  onOpenCart={() => setIsCartOpen(true)}
+                />
+              }
+            />
             <Route path="/admin/login" element={<LoginPage />} />
 
             {/* Protected Admin Routes */}
