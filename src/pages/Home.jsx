@@ -71,89 +71,83 @@ const Home = ({ onAddToCart }) => {
           style={{ backgroundImage: "url('/bg.jpg')" }}
           aria-label="Produtos em destaque"
         >
-          <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" />
-          <div className="relative z-10 mx-auto max-w-5xl px-4 py-3 sm:py-4">
-            <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl bg-black/45 border border-white/15 px-3 py-2.5 sm:px-5 sm:py-3 shadow-md backdrop-blur-md">
-              <div className="flex items-center gap-3 sm:gap-5">
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative z-10 mx-auto max-w-4xl px-4 py-5 sm:py-7">
+            <h1 className="mb-4 text-center text-xl sm:text-2xl font-bold text-white">
+              ✨ Produtos em Destaque
+            </h1>
+
+            <div className="mx-auto max-w-xl sm:max-w-2xl overflow-hidden rounded-2xl bg-black/55 border border-white/15 shadow-xl backdrop-blur-sm">
+              <div className="relative flex h-56 sm:h-64 md:h-72 items-center justify-center bg-black/25 p-2">
+                <img
+                  key={currentProduct.id}
+                  src={currentProduct.img}
+                  alt={currentProduct.nome || 'Produto em destaque'}
+                  className="h-full w-full object-contain"
+                />
                 {featuredProducts.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => changeSlide(-1)}
-                    aria-label="Ver produto em destaque anterior"
-                    className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-lg text-white transition hover:bg-white/30 cursor-pointer"
-                  >
-                    ‹
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => changeSlide(-1)}
+                      aria-label="Ver produto em destaque anterior"
+                      className="absolute left-2.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-xl text-gray-800 shadow transition hover:bg-white cursor-pointer"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => changeSlide(1)}
+                      aria-label="Ver próximo produto em destaque"
+                      className="absolute right-2.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-xl text-gray-800 shadow transition hover:bg-white cursor-pointer"
+                    >
+                      ›
+                    </button>
+                  </>
                 )}
+              </div>
 
-                <div className="h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl bg-white/95 p-1 shadow-sm flex items-center justify-center">
-                  <img
-                    key={currentProduct.id}
-                    src={currentProduct.img}
-                    alt={currentProduct.nome || 'Produto em destaque'}
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-
-                <div className="min-w-0 flex-1 text-left">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block rounded-full bg-rose-500/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                      ✨ Destaque
-                    </span>
+              <div className="flex flex-col items-center gap-2.5 px-4 py-3.5 text-center text-white sm:flex-row sm:justify-between sm:px-5 sm:text-left">
+                <div className="min-w-0">
+                  <h2 className="text-base sm:text-lg font-bold leading-snug">
+                    {currentProduct.nome}
+                  </h2>
+                  <div className="mt-0.5 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                     {currentProduct.categoria && (
-                      <span className="truncate text-[11px] text-white/70">
-                        {currentProduct.categoria}
+                      <span className="text-xs text-white/75">{currentProduct.categoria}</span>
+                    )}
+                    {currentProduct.preco && (
+                      <span className="text-sm font-extrabold text-rose-300">
+                        {formatCurrency(parseCurrency(currentProduct.preco))}
                       </span>
                     )}
                   </div>
-                  <h2 className="mt-0.5 truncate text-sm sm:text-base font-bold text-white">
-                    {currentProduct.nome}
-                  </h2>
-                  {currentProduct.preco && (
-                    <p className="text-xs sm:text-sm font-extrabold text-rose-300">
-                      {formatCurrency(parseCurrency(currentProduct.preco))}
-                    </p>
-                  )}
                 </div>
-
-                <div className="flex flex-col items-end gap-1.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => onAddToCart(currentProduct)}
-                    className="rounded-lg bg-rose-500 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-white shadow transition hover:bg-rose-600 cursor-pointer whitespace-nowrap"
-                  >
-                    + Carrinho
-                  </button>
-
-                  {featuredProducts.length > 1 && (
-                    <div className="flex items-center gap-1" aria-label="Selecionar produto em destaque">
-                      {featuredProducts.map((product, index) => (
-                        <button
-                          key={product.id}
-                          type="button"
-                          onClick={() => setActiveSlide(index)}
-                          aria-label={`Mostrar destaque ${index + 1}: ${product.nome || 'Produto'}`}
-                          aria-current={index === activeSlide ? 'true' : undefined}
-                          className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                            index === activeSlide ? 'w-4 bg-rose-400' : 'w-1.5 bg-white/50 hover:bg-white'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {featuredProducts.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => changeSlide(1)}
-                    aria-label="Ver próximo produto em destaque"
-                    className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-lg text-white transition hover:bg-white/30 cursor-pointer"
-                  >
-                    ›
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => onAddToCart(currentProduct)}
+                  className="w-full sm:w-auto shrink-0 rounded-lg bg-rose-500 px-4 py-2 text-xs sm:text-sm font-bold text-white shadow transition hover:bg-rose-600 cursor-pointer"
+                >
+                  Adicionar ao carrinho
+                </button>
               </div>
+
+              {featuredProducts.length > 1 && (
+                <div className="flex justify-center gap-1.5 pb-3.5" aria-label="Selecionar produto em destaque">
+                  {featuredProducts.map((product, index) => (
+                    <button
+                      key={product.id}
+                      type="button"
+                      onClick={() => setActiveSlide(index)}
+                      aria-label={`Mostrar destaque ${index + 1}: ${product.nome || 'Produto'}`}
+                      aria-current={index === activeSlide ? 'true' : undefined}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        index === activeSlide ? 'w-6 bg-rose-400' : 'w-2 bg-white/60 hover:bg-white'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
