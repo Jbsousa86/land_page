@@ -145,8 +145,79 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="overflow-x-auto"> {/* Added for horizontal scrolling on small screens */}
+        {/* Mobile Product Cards (< md) */}
+        <div className="grid grid-cols-1 gap-3 md:hidden">
+          {products.map((product) => {
+            const isChecked = selectedForPoster.some((id) => String(id) === String(product.id));
+            return (
+              <div
+                key={product.id}
+                className={`rounded-xl bg-white p-3.5 shadow border transition ${
+                  isChecked ? 'border-rose-500 ring-1 ring-rose-400 bg-rose-50/30' : 'border-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleSelectProduct(product.id)}
+                    aria-label={`Selecionar ${product.nome} para cartaz`}
+                    className="h-5 w-5 rounded border-gray-300 text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0"
+                  />
+                  <img
+                    src={product.img}
+                    alt={product.nome}
+                    className="h-14 w-14 object-cover rounded-lg border bg-gray-50 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-bold text-gray-400">#{product.id}</span>
+                      {product.featured && (
+                        <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                          ★ Destaque
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-sm font-bold text-gray-900 truncate">{product.nome}</h3>
+                    <div className="flex items-center justify-between mt-0.5">
+                      <span className="text-xs font-extrabold text-rose-600">R$ {product.preco}</span>
+                      {product.categoria && (
+                        <span className="text-[11px] text-gray-500 truncate ml-2">{product.categoria}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2.5 border-t border-gray-100 grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openPosterForSingleProduct(product.id)}
+                    className="py-2 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs text-center cursor-pointer"
+                  >
+                    🎨 Cartaz
+                  </button>
+                  <Link
+                    to={`/admin/products/${product.id}/edit`}
+                    className="py-2 px-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs text-center"
+                  >
+                    ✏️ Editar
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(product.id)}
+                    className="py-2 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs text-center cursor-pointer"
+                  >
+                    🗑️ Deletar
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Table (>= md) */}
+        <div className="hidden md:block bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>

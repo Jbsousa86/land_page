@@ -231,6 +231,7 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
   const [rendering, setRendering] = useState(false);
   const [copiedCaption, setCopiedCaption] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [mobileTab, setMobileTab] = useState('controls'); // 'controls' | 'preview'
 
   // Sync initial selection when modal opens
   useEffect(() => {
@@ -917,32 +918,62 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-0 sm:p-4">
+      <div className="bg-white sm:rounded-2xl shadow-2xl w-full max-w-6xl h-dvh sm:h-auto sm:max-h-[95vh] flex flex-col overflow-hidden">
         {/* Top Modal Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4 bg-rose-600 text-white shrink-0">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-rose-600 text-white shrink-0">
+          <div className="min-w-0 pr-2">
+            <h2 className="text-base sm:text-xl font-bold flex items-center gap-2 truncate">
               🎨 Estúdio de Cartazes & Vitrine Clicável
             </h2>
-            <p className="text-xs sm:text-sm text-rose-100">
-              Gere a arte para Instagram/WhatsApp + Link do Cartaz Digital Clicável que encaminha direto para a loja
+            <p className="text-[11px] sm:text-sm text-rose-100 line-clamp-1">
+              Gere a arte para Instagram/WhatsApp + Link do Cartaz Digital Clicável
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-rose-700 hover:bg-rose-800 p-2 text-white transition cursor-pointer"
+            className="rounded-full bg-rose-700 hover:bg-rose-800 w-9 h-9 flex items-center justify-center text-white transition cursor-pointer shrink-0"
             aria-label="Fechar gerador de cartaz"
           >
             ✕
           </button>
         </div>
 
+        {/* Mobile Tab Switcher (Visible on phones/tablets < lg) */}
+        <div className="grid grid-cols-2 lg:hidden bg-rose-50 border-b border-rose-200 p-1.5 gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => setMobileTab('controls')}
+            className={`py-2 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+              mobileTab === 'controls'
+                ? 'bg-rose-600 text-white shadow'
+                : 'text-rose-900 hover:bg-rose-100'
+            }`}
+          >
+            ⚙️ 1. Editar Opções ({selectedProducts.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('preview')}
+            className={`py-2 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+              mobileTab === 'preview'
+                ? 'bg-rose-600 text-white shadow'
+                : 'text-rose-900 hover:bg-rose-100'
+            }`}
+          >
+            👁️ 2. Ver Cartaz & Baixar
+          </button>
+        </div>
+
         {/* Main Studio Body */}
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 sm:p-6 bg-gray-50">
+        <div className="flex-1 overflow-y-auto lg:overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 p-3 sm:p-6 bg-gray-50 min-h-0">
           {/* Left Column: Controls */}
-          <div className="lg:col-span-7 space-y-5 overflow-y-auto pr-1">
+          <div
+            className={`${
+              mobileTab === 'controls' ? 'block' : 'hidden lg:block'
+            } lg:col-span-7 space-y-4 sm:space-y-5 lg:overflow-y-auto lg:pr-1 pb-4`}
+          >
             {/* Clickable Web Poster Highlight Box */}
             <div className="bg-rose-50 border-2 border-rose-200 p-4 rounded-xl space-y-2.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1329,7 +1360,11 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
           </div>
 
           {/* Right Column: Live Canvas Preview & Export Buttons */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-between bg-gray-900 rounded-xl p-4 text-white">
+          <div
+            className={`${
+              mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'
+            } lg:col-span-5 flex-col items-center justify-between bg-gray-900 rounded-xl p-4 text-white`}
+          >
             <div className="w-full flex items-center justify-between mb-3">
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Pré-visualização em Tempo Real
@@ -1390,6 +1425,47 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Sticky Mobile Footer Bar (< lg) */}
+        <div className="lg:hidden border-t border-gray-200 bg-white px-3 py-2.5 flex items-center gap-2 shrink-0">
+          {mobileTab === 'controls' ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setMobileTab('preview')}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs sm:text-sm shadow flex items-center justify-center gap-2 cursor-pointer"
+              >
+                👁️ Ver Cartaz Pronto & Baixar / Compartilhar →
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => setMobileTab('controls')}
+                className="py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs cursor-pointer"
+              >
+                ← Editar Opções
+              </button>
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={selectedProducts.length === 0}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-rose-600 text-white font-bold text-xs shadow cursor-pointer"
+              >
+                ⬇️ Baixar PNG
+              </button>
+              <button
+                type="button"
+                onClick={handleShare}
+                disabled={selectedProducts.length === 0}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-green-600 text-white font-bold text-xs shadow cursor-pointer"
+              >
+                📲 Compartilhar
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
