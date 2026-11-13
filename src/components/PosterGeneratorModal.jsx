@@ -869,7 +869,32 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
       .join('\n');
   };
 
-  const handleShare = async () => {
+  const handleShareImageOnly = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    try {
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 1.0));
+      if (!blob) return;
+      const file = new File([blob], `cartaz-eliane-importados-${formatKey}.png`, {
+        type: 'image/png',
+      });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+        });
+      } else {
+        handleDownload();
+      }
+    } catch (err) {
+      if (err?.name !== 'AbortError') {
+        handleDownload();
+      }
+    }
+  };
+
+  const handleShareWithLink = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -1386,21 +1411,30 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <button
                   type="button"
-                  onClick={handleDownload}
+                  onClick={handleShareImageOnly}
                   disabled={selectedProducts.length === 0}
-                  className="w-full py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-600 disabled:opacity-50 font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-pink-600 hover:bg-pink-700 disabled:opacity-50 font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm"
                 >
-                  ⬇️ Baixar Imagem (PNG)
+                  📸 Compartilhar Só PNG (Stories / Status)
                 </button>
                 <button
                   type="button"
-                  onClick={handleShare}
+                  onClick={handleShareWithLink}
                   disabled={selectedProducts.length === 0}
-                  className="w-full py-3 px-4 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm"
                 >
-                  📲 Compartilhar Arte + Link
+                  📲 Compartilhar PNG + Link (Conversas)
                 </button>
               </div>
+
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={selectedProducts.length === 0}
+                className="w-full py-2.5 px-4 rounded-xl bg-rose-500 hover:bg-rose-600 disabled:opacity-50 font-bold text-white shadow transition flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm"
+              >
+                ⬇️ Baixar Imagem (PNG) no Aparelho
+              </button>
 
               <button
                 type="button"
@@ -1444,25 +1478,25 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
               <button
                 type="button"
                 onClick={() => setMobileTab('controls')}
-                className="py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs cursor-pointer"
+                className="py-2.5 px-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs cursor-pointer shrink-0"
               >
-                ← Editar Opções
+                ← Opções
               </button>
               <button
                 type="button"
-                onClick={handleDownload}
+                onClick={handleShareImageOnly}
                 disabled={selectedProducts.length === 0}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-rose-600 text-white font-bold text-xs shadow cursor-pointer"
+                className="flex-1 py-2.5 px-2.5 rounded-xl bg-pink-600 text-white font-bold text-xs shadow cursor-pointer truncate"
               >
-                ⬇️ Baixar PNG
+                📸 Só PNG (Stories)
               </button>
               <button
                 type="button"
-                onClick={handleShare}
+                onClick={handleShareWithLink}
                 disabled={selectedProducts.length === 0}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-green-600 text-white font-bold text-xs shadow cursor-pointer"
+                className="flex-1 py-2.5 px-2.5 rounded-xl bg-green-600 text-white font-bold text-xs shadow cursor-pointer truncate"
               >
-                📲 Compartilhar
+                📲 PNG + Link
               </button>
             </>
           )}
