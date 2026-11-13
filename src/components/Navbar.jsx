@@ -29,6 +29,15 @@ const Navbar = ({ itemCount, onOpenCart }) => {
 
   const handleScroll = (e, id) => {
     e.preventDefault();
+    if (id === 'quem-sou-eu') {
+      navigate('/?aba=sobre');
+      window.setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      closeMenu();
+      return;
+    }
+
     if (id === 'contact') {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     } else if (location.pathname !== '/') {
@@ -64,8 +73,7 @@ const Navbar = ({ itemCount, onOpenCart }) => {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <Link to="/" onClick={handleHomeClick} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Início</Link>
-                <a href="#quem-sou-eu" onClick={(e) => handleScroll(e, 'quem-sou-eu')} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Sobre</a>
-                <Link to="/catalogo" className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Catálogo</Link>
+                <a href="#quem-sou-eu" onClick={(e) => handleScroll(e, 'quem-sou-eu')} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Quem sou eu</a>
                 <a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="text-gray-600 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contato</a>
               </div>
             </div>
@@ -110,8 +118,7 @@ const Navbar = ({ itemCount, onOpenCart }) => {
         <div className="md:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link to="/" onClick={handleHomeClick} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Início</Link>
-            <a href="#quem-sou-eu" onClick={(e) => handleScroll(e, 'quem-sou-eu')} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sobre</a>
-            <Link to="/catalogo" onClick={closeMenu} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Catálogo</Link>
+            <a href="#quem-sou-eu" onClick={(e) => handleScroll(e, 'quem-sou-eu')} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Quem sou eu</a>
             <a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="text-gray-600 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contato</a>
           </div>
         </div>

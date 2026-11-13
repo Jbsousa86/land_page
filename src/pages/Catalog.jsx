@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { api } from '../api';
 import ProductCard from '../components/ProductCard';
 
-const Catalog = ({ onAddToCart }) => {
+const Catalog = ({ onAddToCart, embedded = false }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,12 +59,12 @@ const Catalog = ({ onAddToCart }) => {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center"
+      className={`${embedded ? '' : 'min-h-screen'} bg-cover bg-center`}
       style={{
         backgroundImage: "url('/bg.jpg')",
       }}
     >
-      <div className="bg-black/55 min-h-screen">
+      <div className={`bg-black/55 ${embedded ? '' : 'min-h-screen'}`}>
         <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-extrabold text-white text-center mb-6 sm:mb-8">
             Catálogo de Produtos
