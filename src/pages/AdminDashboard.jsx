@@ -11,7 +11,11 @@ const AdminDashboard = () => {
   const [selectedForPoster, setSelectedForPoster] = useState([]);
   const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
   const [posterInitialIds, setPosterInitialIds] = useState([]);
-  const { logout } = useAuth();
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const { logout, verifyPassword } = useAuth();
 
   const toggleSelectProduct = (id) => {
     setSelectedForPoster((prev) => {
@@ -58,15 +62,43 @@ const AdminDashboard = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await api.deleteProduct(id);
-        fetchProducts(); // Refresh the list
-      } catch (err) {
-        setError('Failed to delete product.');
-        console.error(err);
-      }
+  const handleRequestDelete = (product) => {
+    setProductToDelete(product);
+    setDeletePassword('');
+    setDeleteError('');
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (deleting) return;
+    setProductToDelete(null);
+    setDeletePassword('');
+    setDeleteError('');
+  };
+
+  const handleConfirmDelete = async (e) => {
+    e.preventDefault();
+    if (!productToDelete) return;
+
+    if (!verifyPassword(deletePassword)) {
+      setDeleteError('Senha incorreta! O produto não foi excluído.');
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      setDeleteError('');
+      await api.deleteProduct(productToDelete.id);
+      setSelectedForPoster((prev) =>
+        prev.filter((id) => String(id) !== String(productToDelete.id))
+      );
+      setProductToDelete(null);
+      setDeletePassword('');
+      fetchProducts();
+    } catch (err) {
+      setDeleteError('Erro ao excluir o produto. Tente novamente.');
+      console.error(err);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -204,7 +236,7 @@ const AdminDashboard = () => {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => handleRequestDelete(product)}
                     className="py-2 px-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs text-center cursor-pointer"
                   >
                     🗑️ Deletar
@@ -295,7 +327,8 @@ const AdminDashboard = () => {
                             Editar
                           </Link>
                           <button
-                            onClick={() => handleDelete(product.id)}
+                            type="button"
+                            onClick={() => handleRequestDelete(product)}
                             className="text-red-600 hover:text-red-900 cursor-pointer"
                           >
                             Deletar
@@ -317,6 +350,91 @@ const AdminDashboard = () => {
         allProducts={products}
         initialSelectedIds={posterInitialIds}
       />
+
+      {/* Password Confirmation Modal for Deleting Product */}
+      {productToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200">
+            <div className="bg-red-600 px-5 py-4 text-white flex items-center justify-between">
+              <h3 className="font-bold text-base sm:text-lg flex items-center gap-2">
+                🔒 Confirmar Exclusão de Produto
+              </h3>
+              <button
+                type="button"
+                onClick={handleCloseDeleteModal}
+                className="text-white/80 hover:text-white text-lg font-bold cursor-pointer"
+                aria-label="Fechar modal de exclusão"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleConfirmDelete} className="p-5 space-y-4">
+              <div className="flex items-center gap-3 bg-red-50 border border-red-200 p-3 rounded-xl">
+                {productToDelete.img && (
+                  <img
+                    src={productToDelete.img}
+                    alt={productToDelete.nome}
+                    className="w-14 h-14 rounded-lg object-cover border bg-white shrink-0"
+                  />
+                )}
+                <div className="min-w-0">
+                  <p className="text-xs text-red-700 font-semibold uppercase">
+                    Produto a ser excluído:
+                  </p>
+                  <p className="text-sm font-extrabold text-gray-900 truncate">
+                    {productToDelete.nome}
+                  </p>
+                  <p className="text-xs text-gray-600">Preço: R$ {productToDelete.preco}</p>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="delete-admin-password"
+                  className="block text-xs font-bold text-gray-700 uppercase mb-1.5"
+                >
+                  Digite a senha do Admin para confirmar:
+                </label>
+                <input
+                  id="delete-admin-password"
+                  type="password"
+                  autoFocus
+                  value={deletePassword}
+                  onChange={(e) => {
+                    setDeletePassword(e.target.value);
+                    if (deleteError) setDeleteError('');
+                  }}
+                  placeholder="Sua senha de administrador..."
+                  className="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                  required
+                />
+                {deleteError && (
+                  <p className="mt-2 text-xs font-bold text-red-600">{deleteError}</p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={handleCloseDeleteModal}
+                  disabled={deleting}
+                  className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-bold transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={deleting || !deletePassword}
+                  className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-xs sm:text-sm font-bold shadow transition cursor-pointer"
+                >
+                  {deleting ? 'Excluindo...' : '🗑️ Confirmar Exclusão'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -42,8 +42,13 @@ export const AuthProvider = ({ children }) => {
     return !!user;
   };
 
+  const verifyPassword = (password) => {
+    const envPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+    return password === envPass;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, verifyPassword }}>
       {children}
     </AuthContext.Provider>
   );
