@@ -992,12 +992,12 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
         </div>
 
         {/* Main Studio Body */}
-        <div className="flex-1 overflow-y-auto lg:overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 p-3 sm:p-6 bg-gray-50 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 p-3 sm:p-6 bg-gray-50">
           {/* Left Column: Controls */}
           <div
             className={`${
               mobileTab === 'controls' ? 'block' : 'hidden lg:block'
-            } lg:col-span-7 space-y-4 sm:space-y-5 lg:overflow-y-auto lg:pr-1 pb-4`}
+            } lg:col-span-7 space-y-4 sm:space-y-5 pb-4`}
           >
             {/* Clickable Web Poster Highlight Box */}
             <div className="bg-rose-50 border-2 border-rose-200 p-4 rounded-xl space-y-2.5">
