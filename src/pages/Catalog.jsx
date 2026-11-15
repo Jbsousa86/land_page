@@ -52,30 +52,27 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black/30 flex items-center justify-center">
-        <p className="text-white text-xl">Loading products...</p>
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <p className="text-gray-700 text-xl">Loading products...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-black/30 flex items-center justify-center">
-        <p className="text-red-500 text-xl">{error}</p>
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <p className="text-red-600 text-xl">{error}</p>
       </div>
     );
   }
 
   return (
     <div
-      className={`${embedded ? '' : 'min-h-screen'} bg-cover bg-center`}
-      style={{
-        backgroundImage: "url('/bg.jpg')",
-      }}
+      className={`${embedded ? '' : 'min-h-screen'} bg-stone-50`}
     >
-      <div className={`bg-black/55 ${embedded ? '' : 'min-h-screen'}`}>
+      <div className={`${embedded ? '' : 'min-h-screen'}`}>
         <div className="w-full py-8 sm:py-10 px-4 sm:px-6 lg:px-10 xl:px-14">
-          <h1 className="text-3xl font-extrabold text-white text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-6 sm:mb-8">
             Catálogo de Produtos
           </h1>
 
@@ -103,7 +100,7 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
             </div>
           )}
 
-          <div className="sticky top-16 z-20 -mx-4 sm:mx-0 mb-7 px-4 py-3 sm:rounded-lg border-y sm:border border-white/10 bg-black/65 backdrop-blur-md shadow-lg">
+          <div className="sticky top-16 z-20 -mx-4 sm:mx-0 mb-7 px-4 py-3 sm:rounded-lg border-y sm:border border-gray-200 bg-white/95 backdrop-blur-md shadow-sm">
             <div className="flex flex-col gap-3 md:flex-row md:items-center">
               <div className="relative w-full md:max-w-md md:flex-1">
                 <input
@@ -148,7 +145,7 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
                     className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold transition-colors ${
                       isActive
                         ? 'bg-rose-500 text-white shadow-sm'
-                        : 'bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white border border-white/15'
+                        : 'bg-white text-gray-700 hover:bg-rose-50 hover:text-rose-700 border border-gray-200'
                     }`}
                   >
                     {category} <span className="ml-1 text-xs opacity-80">({count})</span>
@@ -160,7 +157,7 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
           </div>
 
           {filteredProducts.length === 0 ? (
-            <p className="text-white text-center text-lg">Nenhum produto encontrado.</p>
+            <p className="text-gray-600 text-center text-lg">Nenhum produto encontrado.</p>
           ) : (
             Object.entries(
               filteredProducts.reduce((acc, product) => {
@@ -178,7 +175,7 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
               return a[0].localeCompare(b[0]);
             }).map(([category, categoryProducts]) => (
               <div key={category} className="mb-9">
-                <h2 className="text-xl font-bold text-white mb-4 border-b border-white/30 pb-2 inline-block">{category}</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-300 pb-2 inline-block">{category}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                   {categoryProducts.map((product) => (
                     <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
