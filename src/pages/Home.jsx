@@ -155,11 +155,7 @@ const Home = ({ onAddToCart }) => {
 
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          {!isAboutPage ? (
-            <div id="catalogo">
-              <Catalog onAddToCart={onAddToCart} embedded />
-            </div>
-          ) : (
+          {isAboutPage && (
             <>
               <section id="quem-sou-eu" className="rounded-2xl bg-rose-300 px-6 py-10 sm:px-10">
                 <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-2">
@@ -217,6 +213,9 @@ const Home = ({ onAddToCart }) => {
               </section>
             </>
           )}
+          <div id="catalogo" className="scroll-mt-20">
+            <Catalog onAddToCart={onAddToCart} embedded />
+          </div>
         </div>
       </section>
     </>

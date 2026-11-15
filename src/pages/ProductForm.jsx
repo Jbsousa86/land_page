@@ -132,9 +132,9 @@ const ProductForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">
+    <div className="min-h-screen bg-gray-100 p-3 sm:p-8">
+      <div className="max-w-3xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-lg">
+        <h2 className="text-xl sm:text-2xl font-bold text-center mb-6">
           {isEditing ? 'Editar Produto' : 'Adicionar Novo Produto'}
         </h2>
         <form onSubmit={handleSubmit}>
@@ -276,10 +276,10 @@ const ProductForm = () => {
             </label>
           </div>
           {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               disabled={loading}
             >
               {loading ? 'Salvando...' : (isEditing ? 'Atualizar Produto' : 'Adicionar Produto')}
@@ -287,7 +287,7 @@ const ProductForm = () => {
             <button
               type="button"
               onClick={() => navigate('/admin/dashboard')}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full sm:w-auto bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               disabled={loading}
             >
               Cancelar
