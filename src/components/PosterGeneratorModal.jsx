@@ -944,7 +944,7 @@ const PosterGeneratorModal = ({ isOpen, onClose, allProducts = [], initialSelect
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-0 sm:p-4">
-      <div className="bg-white sm:rounded-2xl shadow-2xl w-full max-w-6xl h-dvh sm:h-auto sm:max-h-[95vh] flex flex-col overflow-hidden">
+      <div className="bg-white sm:rounded-2xl shadow-2xl w-full max-w-7xl h-dvh sm:h-auto sm:max-h-[95vh] flex flex-col overflow-hidden">
         {/* Top Modal Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-rose-600 text-white shrink-0">
           <div className="min-w-0 pr-2">
