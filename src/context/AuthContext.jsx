@@ -1,17 +1,19 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { AuthContext } from './authContextCore';
 
-const AuthContext = createContext(null);
+const getStoredUser = () => {
+  const storedUser = localStorage.getItem('adminUser');
+  if (!storedUser) return null;
+  try {
+    return JSON.parse(storedUser);
+  } catch {
+    localStorage.removeItem('adminUser');
+    return null;
+  }
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // { username: 'eliane', token: 'fake-token' }
-
-  useEffect(() => {
-    // Check for a token in localStorage on initial load
-    const storedUser = localStorage.getItem('adminUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  const [user, setUser] = useState(getStoredUser); // { username: 'eliane', token: 'fake-token' }
 
   const login = (username, password) => {
     // In a real application, you'd send these credentials to a backend
@@ -52,8 +54,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  return useContext(AuthContext);
 };

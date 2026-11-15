@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/authContextCore';
 import PosterGeneratorModal from '../components/PosterGeneratorModal';
 
 const AdminDashboard = () => {

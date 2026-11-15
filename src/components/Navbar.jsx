@@ -1,24 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = ({ itemCount, onOpenCart }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [secretCount, setSecretCount] = useState(0);
+  const secretCount = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
 
   const closeMenu = () => setIsOpen(false);
 
   const handleSecretClick = () => {
-    setSecretCount((prev) => prev + 1);
-  };
-
-  useEffect(() => {
-    if (secretCount === 5) {
+    secretCount.current += 1;
+    if (secretCount.current === 5) {
+      secretCount.current = 0;
       navigate('/admin/login');
-      setSecretCount(0);
     }
-  }, [secretCount, navigate]);
+  };
 
   const handleHomeClick = () => {
     if (location.pathname === '/') {

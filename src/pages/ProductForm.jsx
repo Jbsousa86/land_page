@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
 
+const normalizeCategory = (value) => String(value || '').trim().replace(/\s+/g, ' ');
+const categoryKey = (value) => normalizeCategory(value).toLocaleLowerCase('pt-BR');
+
 const ProductForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,6 +22,28 @@ const ProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+
+  const selectedCategory = categories.find((category) => categoryKey(category) === categoryKey(product.categoria)) || product.categoria;
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.getProducts({ includeHidden: true });
+        const uniqueCategories = new Map();
+        response.data.forEach(({ categoria }) => {
+          const name = normalizeCategory(categoria);
+          if (name && !uniqueCategories.has(categoryKey(name))) uniqueCategories.set(categoryKey(name), name);
+        });
+        setCategories([...uniqueCategories.values()].sort((a, b) => a.localeCompare(b, 'pt-BR')));
+      } catch (err) {
+        console.error('Erro ao carregar categorias:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (isEditing) {
@@ -72,10 +97,18 @@ const ProductForm = () => {
     setLoading(true);
     setError(null);
     try {
+      const requestedCategory = normalizeCategory(creatingCategory ? newCategory : product.categoria);
+      const existingCategory = categories.find((category) => categoryKey(category) === categoryKey(requestedCategory));
+      const productToSave = { ...product, categoria: existingCategory || requestedCategory };
+      if (creatingCategory && !requestedCategory) {
+        setError('Informe o nome da nova categoria.');
+        setLoading(false);
+        return;
+      }
       if (isEditing) {
-        await api.updateProduct(id, product);
+        await api.updateProduct(id, productToSave);
       } else {
-        await api.createProduct(product);
+        await api.createProduct(productToSave);
       }
       navigate('/admin/dashboard');
     } catch (err) {
@@ -183,14 +216,37 @@ const ProductForm = () => {
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="categoria">
               Categoria
             </label>
-            <input
-              type="text"
+            <select
               id="categoria"
               name="categoria"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={product.categoria}
-              onChange={handleChange}
-            />
+              value={creatingCategory ? '__new__' : selectedCategory}
+              onChange={(e) => {
+                if (e.target.value === '__new__') {
+                  setCreatingCategory(true);
+                  setNewCategory('');
+                } else {
+                  setCreatingCategory(false);
+                  setProduct((prev) => ({ ...prev, categoria: e.target.value }));
+                }
+              }}
+            >
+              <option value="">Sem categoria</option>
+              {categories.map((category) => <option key={categoryKey(category)} value={category}>{category}</option>)}
+              <option value="__new__">+ Criar nova categoria</option>
+            </select>
+            {creatingCategory && (
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Nome da nova categoria"
+                maxLength={100}
+                autoFocus
+                className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            )}
+            <p className="mt-1 text-xs text-gray-500">Use uma categoria existente para manter os produtos agrupados com o mesmo nome.</p>
           </div>
           <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
             <label className="inline-flex items-center text-sm text-gray-700 cursor-pointer" htmlFor="visivel">
