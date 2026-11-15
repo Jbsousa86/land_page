@@ -153,71 +153,47 @@ const Home = ({ onAddToCart }) => {
         </section>
       )}
 
-      <section className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          {isAboutPage && (
-            <>
-              <section id="quem-sou-eu" className="rounded-2xl bg-rose-300 px-6 py-10 sm:px-10">
-                <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-2">
-                  <div className="text-center md:text-left">
-                    <h2 className="mb-4 text-2xl font-bold">Quem sou eu</h2>
-                    <p className="mb-4">
-                      Sou a <strong>Nana</strong>, da Eliane Importados Buquê Eterno, e essa loja
-                      romântica e criativa nasceu do amor pelos detalhes e pela emoção de presentear
-                      e criar produtos artesanais. Aqui, não vendemos apenas produtos. Vendemos
-                      sentimentos, momentos e emoções, transformados em buquês, box e presentes
-                      especiais. Temos produtos prontos para pronta entrega e também trabalhamos sob
-                      encomenda, criando cada peça com carinho, cuidado e atenção aos detalhes. Seja
-                      um presente imediato ou algo feito especialmente para alguém, tudo aqui carrega
-                      amor e significado. Somos de Ananás – TO, uma loja com atendimento próximo,
-                      humano e feito com o coração. Criamos presentes que falam por você. Pois não
-                      vendemos apenas produtos, vendemos emoção.
-                    </p>
-                    <p>
-                      A <strong>Eliane Importados</strong> nasceu com o objetivo de levar produtos
-                      criativos, bonitos e de qualidade para quem valoriza carinho nos detalhes e
-                      atendimento próximo.
-                    </p>
-                  </div>
-                  <div className="flex justify-center md:justify-end">
-                    <div className="w-full max-w-sm overflow-hidden rounded-3xl shadow">
-                      <img
-                        src="/eliane.png"
-                        alt="Eliane Importados"
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                  </div>
+      {isAboutPage ? (
+        <section className="bg-white px-4 py-8 sm:px-6 sm:py-12">
+          <div id="quem-sou-eu" className="mx-auto max-w-6xl scroll-mt-20 rounded-2xl bg-rose-300 px-5 py-8 shadow-sm sm:px-10 sm:py-12">
+            <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-10">
+              <div className="text-center md:text-left">
+                <h2 className="mb-4 text-2xl font-bold">Quem sou eu</h2>
+                <p className="mb-4">
+                  Sou a <strong>Nana</strong>, da Eliane Importados Buquê Eterno, e essa loja
+                  romântica e criativa nasceu do amor pelos detalhes e pela emoção de presentear
+                  e criar produtos artesanais. Aqui, não vendemos apenas produtos. Vendemos
+                  sentimentos, momentos e emoções, transformados em buquês, box e presentes
+                  especiais. Temos produtos prontos para pronta entrega e também trabalhamos sob
+                  encomenda, criando cada peça com carinho, cuidado e atenção aos detalhes. Seja
+                  um presente imediato ou algo feito especialmente para alguém, tudo aqui carrega
+                  amor e significado. Somos de Ananás – TO, uma loja com atendimento próximo,
+                  humano e feito com o coração. Criamos presentes que falam por você. Pois não
+                  vendemos apenas produtos, vendemos emoção.
+                </p>
+                <p>
+                  A <strong>Eliane Importados</strong> nasceu com o objetivo de levar produtos
+                  criativos, bonitos e de qualidade para quem valoriza carinho nos detalhes e
+                  atendimento próximo.
+                </p>
+              </div>
+              <div className="flex justify-center md:justify-end">
+                <div className="w-full max-w-sm overflow-hidden rounded-3xl shadow">
+                  <img
+                    src="/eliane.png"
+                    alt="Eliane Importados"
+                    className="h-full w-full object-contain"
+                  />
                 </div>
-              </section>
-
-              <section className="mx-auto max-w-5xl px-2 py-12">
-                <h2 className="mb-8 text-center text-2xl font-bold">
-                  O que nossos clientes dizem
-                </h2>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {[
-                    'Produtos lindos, amei!',
-                    'Atendimento excelente e rápido.',
-                    'Comprei para presente e foi um sucesso!',
-                  ].map((depoimento) => (
-                    <div
-                      key={depoimento}
-                      className="rounded-2xl bg-white p-6 text-center shadow-md transition hover:scale-105 hover:shadow-xl"
-                    >
-                      ⭐⭐⭐⭐⭐
-                      <p className="mt-3 italic">“{depoimento}”</p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </>
-          )}
-          <div id="catalogo" className="scroll-mt-20">
-            <Catalog onAddToCart={onAddToCart} embedded />
+              </div>
+            </div>
           </div>
+        </section>
+      ) : (
+        <div id="catalogo" className="scroll-mt-20 w-full">
+          <Catalog onAddToCart={onAddToCart} embedded />
         </div>
-      </section>
+      )}
     </>
   );
 };

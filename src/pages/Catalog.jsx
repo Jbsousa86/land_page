@@ -74,7 +74,7 @@ const Catalog = ({ onAddToCart, embedded = false }) => {
       }}
     >
       <div className={`bg-black/55 ${embedded ? '' : 'min-h-screen'}`}>
-        <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8">
+        <div className="w-full py-8 sm:py-10 px-4 sm:px-6 lg:px-10 xl:px-14">
           <h1 className="text-3xl font-extrabold text-white text-center mb-6 sm:mb-8">
             Catálogo de Produtos
           </h1>
