@@ -3,19 +3,26 @@ import { useAuth } from '../context/authContextCore';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (login(username, password)) {
+
+    try {
+      setSubmitting(true);
+      await login(email, password);
       navigate('/admin/dashboard');
-    } else {
-      setError('Invalid username or password');
+    } catch (loginError) {
+      console.error('Admin login failed:', loginError);
+      setError('Invalid email or password');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -25,15 +32,16 @@ const LoginPage = () => {
         <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Username
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+              Email
             </label>
             <input
-              type="text"
-              id="username"
+              type="email"
+              id="email"
+              autoComplete="username"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -44,6 +52,7 @@ const LoginPage = () => {
             <input
               type="password"
               id="password"
+              autoComplete="current-password"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -54,9 +63,10 @@ const LoginPage = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
+              disabled={submitting}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Sign In
+              {submitting ? 'Signing in...' : 'Sign In'}
             </button>
           </div>
         </form>

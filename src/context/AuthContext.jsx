@@ -1,56 +1,75 @@
-import React, { useState } from 'react';
-import { AuthContext } from './authContextCore';
-
-const getStoredUser = () => {
-  const storedUser = localStorage.getItem('adminUser');
-  if (!storedUser) return null;
-  try {
-    return JSON.parse(storedUser);
-  } catch {
-    localStorage.removeItem('adminUser');
-    return null;
-  }
-};
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
+import { AuthContext, isAdminUser } from './authContextCore';
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(getStoredUser); // { username: 'eliane', token: 'fake-token' }
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (username, password) => {
-    // In a real application, you'd send these credentials to a backend
-    // and receive a token or user object upon successful authentication.
-    
-    // Ler variáveis de ambiente (Vite usa import.meta.env)
-    // Usa valores padrão (fallback) para testes locais caso as variáveis não estejam definidas
-    //const envUser = import.meta.env.VITE_ADMIN_USERNAME;
-    //const envPass = import.meta.env.VITE_ADMIN_PASSWORD;
-    const envUser = import.meta.env.VITE_ADMIN_USERNAME || 'eliane';
-    const envPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+  useEffect(() => {
+    let active = true;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    });
 
-    if (username === envUser && password === envPass) { 
-      const authenticatedUser = { username: envUser, token: 'fake-admin-token' };
-      setUser(authenticatedUser);
-      localStorage.setItem('adminUser', JSON.stringify(authenticatedUser));
-      return true;
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) return;
+      if (error) {
+        console.error('Unable to restore Supabase session:', error);
+        setUser(null);
+      } else {
+        setUser(data.session?.user ?? null);
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const login = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (error) throw error;
+    if (!isAdminUser(data.user)) {
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) {
+        console.error('Unable to sign out non-admin user:', signOutError);
+      }
+      throw new Error('This account is not authorized to access the admin area.');
     }
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('adminUser');
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   };
 
-  const isAuthenticated = () => {
-    return !!user;
-  };
+  const verifyPassword = async (password) => {
+    if (!isAdminUser(user)) return false;
 
-  const verifyPassword = (password) => {
-    const envPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
-    return password === envPass;
+    const { error } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password,
+    });
+
+    if (error?.status === 400) return false;
+    if (error) throw error;
+    return true;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, verifyPassword }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, verifyPassword }}>
       {children}
     </AuthContext.Provider>
   );

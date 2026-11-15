@@ -99,14 +99,15 @@ const AdminDashboard = () => {
     e.preventDefault();
     if (!productToDelete) return;
 
-    if (!verifyPassword(deletePassword)) {
-      setDeleteError('Senha incorreta! O produto não foi excluído.');
-      return;
-    }
-
     try {
       setDeleting(true);
       setDeleteError('');
+      const passwordIsValid = await verifyPassword(deletePassword);
+      if (!passwordIsValid) {
+        setDeleteError('Senha incorreta! O produto não foi excluído.');
+        return;
+      }
+
       await api.deleteProduct(productToDelete.id);
       setSelectedForPoster((prev) =>
         prev.filter((id) => String(id) !== String(productToDelete.id))
@@ -115,10 +116,19 @@ const AdminDashboard = () => {
       setDeletePassword('');
       fetchProducts();
     } catch (err) {
-      setDeleteError('Erro ao excluir o produto. Tente novamente.');
-      console.error(err);
+      setDeleteError('Não foi possível confirmar a senha ou excluir o produto. Tente novamente.');
+      console.error('Erro ao validar a senha ou excluir o produto:', err);
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Erro ao encerrar sessão:', err);
+      alert('Não foi possível encerrar a sessão. Tente novamente.');
     }
   };
 
@@ -165,7 +175,7 @@ const AdminDashboard = () => {
               Novo produto
             </Link>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center"
             >
               Sair
